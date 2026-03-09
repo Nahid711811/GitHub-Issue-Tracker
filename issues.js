@@ -74,3 +74,60 @@ const displayIssues = (issues) => {
     };
 
     // card
+
+
+    function showSpinner() {
+    loadingSpinner.classList.remove('hidden');
+     // cardContainer.innerHTML ='';
+}
+function hideSpinner() {
+    loadingSpinner.classList.add('hidden')
+}
+
+document.querySelectorAll('.button:not(.btn-new)').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.btn:not(.btn-new)').forEach(b => b.classList.replace('btn-primary', 'btn-outline'));
+        btn.classList.replace('btn-outline', 'btn-primary');
+        const status = btn.textContent.trim().toLowerCase();
+        loadIssues(status);
+    });
+});
+
+function openModal(id) {
+    const url = `https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`
+    fetch(url).then((res) => res.json()).then((data) => {
+        const issuE = data.data;
+        document.getElementById('modal_title').innerText = issuE.title
+        document.getElementById('modal_status').innerText = issuE.status;
+        document.getElementById('modal_author').innerText = issuE.author;
+        document.getElementById('update_date').innerText = new Date(issuE.updatedAt).toLocaleDateString('en-GB');
+        document.getElementById('modal_description').innerText = issuE.description;
+         document.getElementById('modal_bug').innerText = issuE.labels[0];
+        const modalHelp = document.getElementById('modal_help');
+        if(issuE.labels[1]){
+            modalHelp.innerText = issuE.labels[1];
+            
+        }
+        else{
+            modalHelp.innerText = 'No issue found'
+        }
+
+
+        const assigneeEl = document.getElementById('modal_assignee');
+        if (issuE.assignee) {
+            assigneeEl.innerText = issuE.assignee;
+            assigneeEl.parentElement.style.display = 'block';
+        } else {
+            assigneeEl.innerText = "No Assignee Found"
+        }
+
+        const priorityElement = document.getElementById('modal_priority');
+        priorityElement.innerText = issuE.priority;
+        priorityElement.setAttribute('style', getPriorityColor(issuE.priority));
+
+    });
+    cardDetailsModal.showModal();
+    // console.log('Open Modal',id);
+}
+
+loadIssues();
