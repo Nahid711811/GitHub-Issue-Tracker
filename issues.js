@@ -131,3 +131,19 @@ function openModal(id) {
 }
 
 loadIssues();
+
+document.getElementById('btn-search').addEventListener('click',()=>{
+    const inputSearch = document.getElementById('input-search');
+    const searchValue = inputSearch.value.trim().toLowerCase();
+    console.log(searchValue);
+    showSpinner()
+    fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues`)
+    .then((res)=>res.json())
+    .then((data)=>{
+        const allData = data.data;
+        console.log(allData);
+        const filterData = allData.filter((data)=>data.title.toLowerCase().includes(searchValue))
+        displayIssues(filterData);
+        hideSpinner();
+    });
+})
